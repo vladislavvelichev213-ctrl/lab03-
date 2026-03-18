@@ -1,0 +1,20 @@
+# Добавление директории include для поиска print.hpp
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
+
+# Добавление директории с библиотекой print
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/../_build)
+
+add_executable(example1 example1.cpp)
+add_executable(example2 example2.cpp)
+
+# Явное указание пути к библиотеке print
+target_link_libraries(example1 
+    ${CMAKE_CURRENT_BINARY_DIR}/../libprint.a
+)
+target_link_libraries(example2 
+    ${CMAKE_CURRENT_BINARY_DIR}/../libprint.a
+)
+
+install(TARGETS example1 example2
+    RUNTIME DESTINATION bin
+)
