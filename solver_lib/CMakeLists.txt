@@ -6,9 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(solver_lib STATIC solver.cpp)
 
-target_include_directories(solver_lib INTERFACE
-${CMAKE_CURRENT_SOURCE_DIR}>
-)
+target_include_directories(solver_lib 
+INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 install(TARGETS solver_lib
     ARCHIVE DESTINATION lib
