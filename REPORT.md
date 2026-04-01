@@ -571,7 +571,7 @@ EOF
 
 ```bash
 cat > CMakeLists.txt <<'EOF'
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.10)
 project(formatter_ex)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -579,9 +579,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(formatter_ex STATIC formatter_ex.cpp)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../formatter_lib)
-
-target_link_libraries(formatter_ex formatter)
+target_link_libraries(formatter_ex PUBLIC formatter)
 EOF
 ```
 
@@ -611,7 +609,7 @@ EOF
 
 ```bash
 cat > CMakeLists.txt <<'EOF'
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.10)
 project(hello_world)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -619,10 +617,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(hello_world hello_world.cpp)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../formatter_lib)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../formatter_ex_lib)
+target_include_directories(hello_world PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../formatter_lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/../formatter_ex_lib
+)
 
-target_link_libraries(hello_world formatter_ex formatter)
+target_link_libraries(hello_world PRIVATE formatter_ex formatter)
+
+install(TARGETS hello_world
+    RUNTIME DESTINATION bin
+)
 EOF
 ```
 
@@ -747,7 +751,7 @@ EOF
 
 ```bash
 cat > CMakeLists.txt <<'EOF'
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.10)
 project(solver)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -755,11 +759,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(solver solver.cpp)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../formatter_lib)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../formatter_ex_lib)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../solver_lib)
+target_link_libraries(solver PRIVATE 
+    formatter_ex formatter solver_lib)
 
-target_link_libraries(solver formatter_ex formatter solver_lib)
+install(TARGETS solver
+    RUNTIME DESTINATION bin
+)
 EOF
 ```
 
@@ -803,18 +808,11 @@ mkdir -p examples
 
 ```bash
 cat > examples/CMakeLists.txt <<'EOF'
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
-
-add_library(print STATIC IMPORTED)
-set_target_properties(print PROPERTIES
-    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/../libprint.a
-)
-
 add_executable(example1 example1.cpp)
 add_executable(example2 example2.cpp)
 
-target_link_libraries(example1 print)
-target_link_libraries(example2 print)
+target_link_libraries(example1 PRIVATE formatter)
+target_link_libraries(example2 PRIVATE formatter_ex formatter)
 
 install(TARGETS example1 example2
     RUNTIME DESTINATION bin
