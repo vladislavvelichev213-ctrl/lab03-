@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-#include "../formatter_ex_lib/formatter_ex.h"
-#include "../solver_lib/solver.h"
+#include "formatter_ex.h"
+#include "solver.h"
 
 int main(int argc, char** argv)
 {
